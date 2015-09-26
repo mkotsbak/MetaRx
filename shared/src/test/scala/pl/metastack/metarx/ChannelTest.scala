@@ -366,7 +366,7 @@ object ChannelTest extends SimpleTestSuite {
     assertEquals(value, (24, 43))
   }
 
-  test("zipWith()") {
+  test("zipWith() with Vars") {
     val ch = Var(0)
     val ch2 = Var(1)
 
@@ -374,6 +374,24 @@ object ChannelTest extends SimpleTestSuite {
 
     var values = mutable.ArrayBuffer.empty[Int]
     zip.attach(values += _)
+
+    assertEquals(values, Seq(1))
+
+    ch := 2
+    assertEquals(values, Seq(1, 3))
+  }
+
+  test("zipWith() with Channels") {
+    val ch = Channel[Int]()
+    val ch2 = Channel[Int]()
+
+    val zip = ch.zipWith(ch2)(_ + _)
+
+    var values = mutable.ArrayBuffer.empty[Int]
+    zip.attach(values += _)
+
+    ch := 0
+    ch2 := 1
 
     assertEquals(values, Seq(1))
 
